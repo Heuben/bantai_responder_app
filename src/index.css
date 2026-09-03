@@ -1,0 +1,154 @@
+/* @import url() FONT IMPORTS MUST ALWAYS BE AT THE VERY TOP OF THIS FILE, ABOVE THE TAILWIND IMPORTS — DO NOT DELETE THIS COMMENT */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
+
+/* CRITICAL: THE FOLLOWING TAILWIND IMPORTS MUST NEVER BE DELETED OR REORDERED — DO NOT DELETE THIS COMMENT */
+@import 'tailwindcss/base';
+@import 'tailwindcss/components';
+@import 'tailwindcss/utilities';
+
+/* END TAILWIND IMPORTS — ALL OTHER CSS MUST GO BELOW THIS LINE */
+
+:root {
+  --bg: 240 243 248;
+  --surface: 255 255 255;
+  --raised: 244 247 251;
+  --line: 214 222 233;
+  --ink: 11 17 32;
+  --muted: 92 105 125;
+  --primary: 11 95 255;
+  --primary-ink: 255 255 255;
+  --urgent: 217 119 6;
+  --success: 21 143 66;
+  --danger: 208 33 33;
+  --map: 233 238 244;
+  --map-block: 220 227 236;
+  --map-road: 255 255 255;
+  /* Data-viz accents — see ../design-tokens.md */
+  --accent: 236 72 153;
+  --accent-soft: 254 226 226;
+  --cyan: 14 165 233;
+  --cyan-soft: 224 242 254;
+  --violet: 124 58 237;
+  --violet-soft: 237 233 254;
+}
+.dark {
+  --bg: 9 11 17;
+  --surface: 17 21 30;
+  --raised: 24 29 41;
+  --line: 38 45 58;
+  --ink: 235 240 248;
+  --muted: 150 165 185;
+  --primary: 88 166 255;
+  --primary-ink: 6 12 24;
+  --urgent: 245 158 11;
+  --success: 52 211 122;
+  --danger: 248 113 113;
+  --map: 16 22 32;
+  --map-block: 25 33 46;
+  --map-road: 47 60 80;
+  --accent: 244 114 182;
+  --accent-soft: 76 16 36;
+  --cyan: 56 189 248;
+  --cyan-soft: 8 47 73;
+  --violet: 167 139 250;
+  --violet-soft: 39 24 76;
+}
+html {
+  scroll-behavior: smooth;
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+}
+html,
+body,
+#root {
+  height: 100%;
+}
+body {
+  font-family: 'Inter', system-ui, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  /* Momentum scrolling on iOS */
+  -webkit-overflow-scrolling: touch;
+  overscroll-behavior-y: contain;
+}
+.tabular {
+  font-variant-numeric: tabular-nums;
+}
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+/* Canonical design-system alias — see bantai_project/design-tokens.md */
+.scrollbar-none {
+  scrollbar-width: none !important;
+  -ms-overflow-style: none !important;
+}
+.scrollbar-none::-webkit-scrollbar {
+  display: none !important;
+  width: 0 !important;
+  height: 0 !important;
+}
+/* Default: visible thin scrollbars everywhere (subtle, never clumsy). */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-thumb {
+  background: rgb(var(--line));
+  border-radius: 999px;
+  border: 2px solid transparent;
+  background-clip: content-box;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+* {
+  scrollbar-width: thin;
+  scrollbar-color: rgb(var(--line)) transparent;
+}
+
+/* 2026 — fluid motion utilities */
+@keyframes pulse-glow {
+  0%, 100% {
+    box-shadow: 0 0 0 0 rgb(var(--success) / 0.45), 0 0 12px 0 rgb(var(--success) / 0.25);
+  }
+  50% {
+    box-shadow: 0 0 0 6px rgb(var(--success) / 0), 0 0 18px 2px rgb(var(--success) / 0.35);
+  }
+}
+.animate-pulse-glow {
+  animation: pulse-glow 2.2s ease-in-out infinite;
+}
+@keyframes pulse-glow-danger {
+  0%, 100% {
+    box-shadow: 0 0 0 0 rgb(var(--danger) / 0.4), 0 0 12px 0 rgb(var(--danger) / 0.2);
+  }
+  50% {
+    box-shadow: 0 0 0 6px rgb(var(--danger) / 0), 0 0 18px 2px rgb(var(--danger) / 0.3);
+  }
+}
+.animate-pulse-glow-danger {
+  animation: pulse-glow-danger 2.2s ease-in-out infinite;
+}
+.glass {
+  background-color: rgb(var(--surface) / 0.72);
+  backdrop-filter: saturate(160%) blur(14px);
+  -webkit-backdrop-filter: saturate(160%) blur(14px);
+  border: 1px solid rgb(var(--line) / 0.7);
+  box-shadow: 0 8px 30px -8px rgb(15 23 42 / 0.18);
+}
+.dark .glass {
+  background-color: rgb(var(--surface) / 0.6);
+  box-shadow: 0 12px 36px -8px rgb(0 0 0 / 0.5);
+}
+.dark .shadow-lift-lg {
+  box-shadow: 0 12px 32px -8px rgb(0 0 0 / 0.55);
+}
+.dark .shadow-lift {
+  box-shadow: 0 8px 24px -8px rgb(0 0 0 / 0.55);
+}
+.dark .shadow-card {
+  box-shadow: 0 1px 2px rgb(0 0 0 / 0.30), 0 1px 3px rgb(0 0 0 / 0.20);
+}

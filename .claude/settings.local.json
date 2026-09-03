@@ -1,0 +1,19 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(npm install *)",
+      "Bash(rtk npm *)",
+      "Bash(rtk tsc)",
+      "Bash(npx tsc *)",
+      "Bash(rtk grep *)",
+      "Bash(npm run *)",
+      "Bash(rtk wc *)",
+      "Bash(rtk ls *)",
+      "Bash(rtk read *)",
+      "Bash(rtk find *)",
+      "Bash(rtk npx *)",
+      "Bash(rtk curl *)",
+      "PowerShell(Get-ChildItem -Path \"C:\\\\Users\\\\cl Yde\\\\Desktop\\\\magicpatter\" -Recurse -Depth 2 -ErrorAction SilentlyContinue | Select-Object FullName | Where-Object { $_.FullName -notmatch \"node_modules|\\\\.git|dist|build\" } | Select-Object -First 50)"
+    ]
+  }
+}
