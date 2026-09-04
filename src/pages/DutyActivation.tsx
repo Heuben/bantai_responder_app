@@ -127,6 +127,7 @@ export function DutyActivation() {
                   onClick={() => {
                     setMode('preset');
                     setMinutes(preset.minutes);
+                    setCustom(preset.minutes);
                   }}
                   aria-pressed={active}
                   className={`flex min-h-[64px] w-full items-center justify-between rounded-xl border-2 px-4 text-left transition-all duration-300 ease-out focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary ${
@@ -169,8 +170,10 @@ export function DutyActivation() {
                 value={custom}
                 aria-label="Custom shift length"
                 onChange={(e) => {
+                  const nextCustom = Number(e.target.value);
                   setMode('custom');
-                  setCustom(Number(e.target.value));
+                  setCustom(nextCustom);
+                  setMinutes(nextCustom);
                 }}
                 className="mt-3 h-2 w-full accent-[rgb(var(--primary))]" />
 
