@@ -14,6 +14,7 @@ import { ActiveIncident } from './pages/ActiveIncident';
 import { OutcomeReviewPage } from './pages/OutcomeReview';
 import { PostIncidentReport } from './pages/PostIncidentReport';
 import { Settings } from './pages/Settings';
+import { Notifications } from './pages/Notifications';
 import { IncomingAlert } from './pages/IncomingAlert';
 import { dispatchedAlert } from './data/alerts';
 import { pastReports } from './data/reports';
@@ -128,6 +129,7 @@ function Shell({ requiresPasswordChange }: {requiresPasswordChange: boolean;}) {
         <Route path="/incident" element={<ActiveIncident />} />
         <Route path="/outcome" element={<OutcomeReviewPage />} />
         <Route path="/report" element={<PostIncidentReport />} />
+        <Route path="/notifications" element={<Notifications />} />
         <Route path="/settings" element={<Settings />} />
         <Route path="*" element={<Navigate to={authenticated ? '/home' : '/login'} replace />} />
       </Routes>
