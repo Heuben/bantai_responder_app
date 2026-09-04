@@ -47,11 +47,11 @@ export interface RealMapHandle {
 // Icon SVGs rendered inline inside pill badges. White-on-dark fallbacks to keep the
 // palette tight and consistent across incident types.
 const ICON_GLYPHS: Record<IncidentType, string> = {
-  FIREARM_THREAT: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" width="14" height="14"><path d="M4 13h2l1-3h9l2 3h2v4h-2l-1 2H7l-1-2H4z"/><circle cx="12" cy="14" r="1.5"/></svg>`,
-  BLADE_THREAT: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" width="14" height="14"><path d="M4 20l8-8m0 0l5-5m-5 5l5 5m-5-5l-5-5"/><path d="M14 4l6 6"/></svg>`,
-  THREAT_TO_PERSON: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" width="14" height="14"><circle cx="12" cy="8" r="3.5"/><path d="M5 20c0-3.5 3-6 7-6s7 2.5 7 6"/></svg>`,
-  ACCIDENT: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" width="14" height="14"><path d="M12 3v18M3 12h18"/></svg>`,
-  CONNECTION_LOSS: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" width="14" height="14"><path d="M2 8c4-4 16-4 20 0"/><path d="M5 12c3-3 11-3 14 0"/><path d="M8.5 16c1.5-1.5 5.5-1.5 7 0"/><circle cx="12" cy="20" r="1.4"/></svg>`
+  FIREARM_THREAT: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" width="16" height="16"><path d="M12 3l8 5v4c0 4.4-2.9 8.3-8 9-5.1-.7-8-4.6-8-9V8l8-5z"/><path d="M12 8l3 3m-3-3l-3 3m3-3v8"/></svg>`,
+  BLADE_THREAT: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" width="16" height="16"><path d="M5 19l8-8M13 5l6 6M9 9l6 6m-6-6L5 5"/><path d="M8 16l-3 3"/></svg>`,
+  THREAT_TO_PERSON: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" width="16" height="16"><path d="M12 3l8 5v5c0 4.2-2.7 8-8 9-5.3-1-8-4.8-8-9V8l8-5z"/><path d="M12 8v5"/><circle cx="12" cy="16.5" r="1.2" fill="currentColor" stroke="none"/></svg>`,
+  ACCIDENT: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" width="16" height="16"><path d="M4 15l2.5-6h11L20 15v3H4v-3z"/><path d="M8 15h8"/><path d="M9 9l1-2h4l1 2"/><circle cx="8" cy="18.5" r="1.2" fill="currentColor" stroke="none"/><circle cx="16" cy="18.5" r="1.2" fill="currentColor" stroke="none"/></svg>`,
+  CONNECTION_LOSS: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" width="16" height="16"><path d="M2 8c4-4 16-4 20 0"/><path d="M5 12c3-3 11-3 14 0"/><path d="M8.5 16c1.5-1.5 5.5-1.5 7 0"/><path d="M18 18l4 4"/><path d="M22 18l-4 4"/></svg>`
 };
 
 // Build the responder's location divIcon HTML: pulsing blue dot with a soft
@@ -66,28 +66,56 @@ function responderIconHtml(): string {
   `;
 }
 
-// Build a pill-shaped incident badge with a small downward diamond anchor.
+// Build a circular incident marker using semi-transparent incident colors.
 function pillBadgeHtml(opts: {
   iconSvg: string;
   distanceLabel: string;
   variant: 'engaged' | 'alert';
   dimmed: boolean;
+  incidentType: IncidentType;
 }): string {
-  const { iconSvg, distanceLabel, variant, dimmed } = opts;
-  const bg = dimmed ? '#475569' : variant === 'engaged' ? '#ea580c' : '#0f172a';
-  const opacity = dimmed ? '0.55' : '1';
+  const { iconSvg, distanceLabel, variant, dimmed, incidentType } = opts;
+
+  const baseColors: Record<IncidentType, { bg: string; glow: string; icon: string }> = {
+    FIREARM_THREAT: { bg: 'rgba(239, 68, 68, 0.25)', glow: 'rgba(239, 68, 68, 0.28)', icon: '#fff1f2' },
+    BLADE_THREAT: { bg: 'rgba(239, 68, 68, 0.22)', glow: 'rgba(239, 68, 68, 0.24)', icon: '#fff1f2' },
+    THREAT_TO_PERSON: { bg: 'rgba(239, 68, 68, 0.2)', glow: 'rgba(239, 68, 68, 0.2)', icon: '#fff1f2' },
+    ACCIDENT: { bg: 'rgba(239, 68, 68, 0.25)', glow: 'rgba(239, 68, 68, 0.28)', icon: '#fff1f2' },
+    CONNECTION_LOSS: { bg: 'rgba(148, 163, 184, 0.22)', glow: 'rgba(148, 163, 184, 0.22)', icon: '#f8fafc' }
+  };
+
+  const tone = baseColors[incidentType] ?? baseColors.THREAT_TO_PERSON;
+  const bg = dimmed ? 'rgba(100, 116, 139, 0.18)' : variant === 'engaged' ? 'rgba(249, 115, 22, 0.28)' : tone.bg;
+  const glow = dimmed ? 'rgba(100, 116, 139, 0.18)' : variant === 'engaged' ? 'rgba(249, 115, 22, 0.24)' : tone.glow;
+  const opacity = dimmed ? '0.8' : '1';
+
   return `
-    <div class="bantai-pill" style="background:${bg};opacity:${opacity};">
+    <div
+      class="bantai-pill"
+      title="${distanceLabel}"
+      aria-label="Incident marker ${distanceLabel}"
+      style="--pill-bg:${bg}; --pill-glow:${glow}; --pill-icon:${tone.icon}; opacity:${opacity};"
+    >
       <span class="bantai-pill-icon">${iconSvg}</span>
-      <span class="bantai-pill-label">${distanceLabel}</span>
-      <span class="bantai-pill-anchor" style="border-top-color:${bg};"></span>
     </div>
   `;
 }
 
 // Inline CSS injected once per mount — scopes Leaflet divIcons to the marker
 // surface only so it can't leak across the app.
-const MARKER_CSS = `
+const MAP_UI_CSS = `
+  .leaflet-container {
+    background: linear-gradient(180deg, #edf3ff 0%, #e9f0f7 100%);
+    filter: saturate(1.12) contrast(1.04) brightness(1.02);
+  }
+  .leaflet-tile {
+    filter: saturate(1.1) contrast(1.05) brightness(1.03);
+  }
+  .bantai-map-surface {
+    background:
+      radial-gradient(circle at top left, rgba(96, 165, 250, 0.18), transparent 32%),
+      linear-gradient(180deg, rgba(248, 250, 252, 0.84), rgba(228, 234, 242, 0.78));
+  }
   .bantai-self-marker {
     position: relative;
     width: 56px;
@@ -131,15 +159,16 @@ const MARKER_CSS = `
     position: relative;
     display: inline-flex;
     align-items: center;
-    gap: 6px;
-    padding: 5px 10px 5px 8px;
-    border-radius: 999px;
-    color: #ffffff;
-    font: 600 12px/1 ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
-    white-space: nowrap;
-    box-shadow: 0 4px 14px rgba(15, 23, 42, 0.28);
-    border: 1px solid rgba(255, 255, 255, 0.08);
-    transform: translateY(-4px);
+    justify-content: center;
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    color: var(--pill-icon, #ffffff);
+    background: linear-gradient(180deg, rgba(255,255,255,0.25), var(--pill-bg));
+    box-shadow: 0 12px 18px var(--pill-glow), 0 0 0 3px rgba(255,255,255,0.7);
+    border: 1px solid rgba(255,255,255,0.7);
+    backdrop-filter: blur(6px);
+    transform: translateY(-6px);
     cursor: pointer;
     user-select: none;
   }
@@ -147,31 +176,15 @@ const MARKER_CSS = `
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    width: 16px;
-    height: 16px;
-    color: #ffffff;
+    width: 24px;
+    height: 24px;
+    color: var(--pill-icon, #ffffff);
     flex-shrink: 0;
   }
-  .bantai-pill-label {
-    letter-spacing: 0.01em;
-    display: inline-block;
-    max-width: 120px;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-    flex-shrink: 1;
-  }
-  .bantai-pill-anchor {
-    position: absolute;
-    left: 50%;
-    bottom: -5px;
-    width: 0;
-    height: 0;
-    margin-left: -5px;
-    border-left: 5px solid transparent;
-    border-right: 5px solid transparent;
-    border-top-style: solid;
-    border-top-width: 6px;
+  .bantai-pill-icon svg {
+    width: 20px;
+    height: 20px;
+    display: block;
   }
 `;
 
@@ -183,14 +196,14 @@ function MapControls({ onZoomIn, onZoomOut, onCenter }: {
 }) {
   return (
     <div
-      className="absolute top-3 right-3 z-30 flex flex-col gap-1.5"
+      className="absolute top-3 right-3 z-30 flex flex-col gap-2"
       aria-label="Map controls"
     >
       <button
         type="button"
         aria-label="Zoom in"
         onClick={onZoomIn}
-        className="flex h-9 w-9 items-center justify-center rounded-xl border border-white/20 bg-white/70 backdrop-blur-md text-ink shadow-sm transition-all duration-150 hover:bg-white/90 hover:shadow-md active:scale-95"
+        className="flex h-11 w-11 items-center justify-center rounded-full border border-white/65 bg-white/25 text-slate-800 shadow-[0_10px_20px_rgba(15,23,42,0.12)] backdrop-blur-xl transition-all duration-200 hover:-translate-y-0.5 hover:bg-white/40 hover:shadow-[0_12px_22px_rgba(15,23,42,0.18)] active:scale-95"
       >
         <svg viewBox="0 0 20 20" fill="none" className="h-4 w-4" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round">
           <line x1="10" y1="4" x2="10" y2="16" />
@@ -201,7 +214,7 @@ function MapControls({ onZoomIn, onZoomOut, onCenter }: {
         type="button"
         aria-label="Zoom out"
         onClick={onZoomOut}
-        className="flex h-9 w-9 items-center justify-center rounded-xl border border-white/20 bg-white/70 backdrop-blur-md text-ink shadow-sm transition-all duration-150 hover:bg-white/90 hover:shadow-md active:scale-95"
+        className="flex h-11 w-11 items-center justify-center rounded-full border border-white/65 bg-white/25 text-slate-800 shadow-[0_10px_20px_rgba(15,23,42,0.12)] backdrop-blur-xl transition-all duration-200 hover:-translate-y-0.5 hover:bg-white/40 hover:shadow-[0_12px_22px_rgba(15,23,42,0.18)] active:scale-95"
       >
         <svg viewBox="0 0 20 20" fill="none" className="h-4 w-4" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round">
           <line x1="4" y1="10" x2="16" y2="10" />
@@ -211,7 +224,7 @@ function MapControls({ onZoomIn, onZoomOut, onCenter }: {
         type="button"
         aria-label="Center on my location"
         onClick={onCenter}
-        className="flex h-9 w-9 items-center justify-center rounded-xl border border-white/20 bg-white/70 backdrop-blur-md text-primary shadow-sm transition-all duration-150 hover:bg-white/90 hover:shadow-md active:scale-95"
+        className="flex h-11 w-11 items-center justify-center rounded-full border border-blue-200/75 bg-blue-500/20 text-blue-700 shadow-[0_12px_24px_rgba(59,130,246,0.25)] backdrop-blur-xl transition-all duration-200 hover:-translate-y-0.5 hover:bg-blue-500/30 hover:shadow-[0_14px_28px_rgba(59,130,246,0.32)] active:scale-95"
       >
         <svg viewBox="0 0 20 20" fill="none" className="h-4 w-4" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
           <circle cx="10" cy="10" r="2.5" />
@@ -332,7 +345,7 @@ export const RealMap = memo(forwardRef<RealMapHandle, RealMapProps>(function Rea
     if (!document.getElementById('bantai-map-marker-style')) {
       const styleEl = document.createElement('style');
       styleEl.id = 'bantai-map-marker-style';
-      styleEl.textContent = MARKER_CSS;
+      styleEl.textContent = MAP_UI_CSS;
       document.head.appendChild(styleEl);
     }
 
@@ -405,10 +418,10 @@ export const RealMap = memo(forwardRef<RealMapHandle, RealMapProps>(function Rea
         const distanceLabel = marker.distanceLabel ?? '';
 
         const icon = L.divIcon({
-          html: pillBadgeHtml({ iconSvg, distanceLabel, variant, dimmed }),
+          html: pillBadgeHtml({ iconSvg, distanceLabel, variant, dimmed, incidentType: marker.type }),
           className: 'bantai-pill-icon-wrapper',
-          iconSize: [88, 36],
-          iconAnchor: [44, 36]
+          iconSize: [44, 44],
+          iconAnchor: [22, 28]
         });
 
         const markerInstance = L.marker([marker.lat, marker.lng], { icon })
@@ -493,7 +506,7 @@ export const RealMap = memo(forwardRef<RealMapHandle, RealMapProps>(function Rea
 
     return (
       <APIProvider apiKey={apiKey}>
-        <div className={`relative ${heightClass} ${widthClass} z-0 overflow-hidden rounded-2xl border border-line ${className}`}>
+        <div className={`bantai-map-surface relative ${heightClass} ${widthClass} z-0 overflow-hidden rounded-2xl border border-line ${className}`}>
           {showControls && (
             <MapControls
               onZoomIn={handleZoomIn}
@@ -554,7 +567,7 @@ export const RealMap = memo(forwardRef<RealMapHandle, RealMapProps>(function Rea
   // Fallback Leaflet Map rendering
   return (
     <div
-      className={`relative ${heightClass} ${widthClass} z-0 overflow-hidden rounded-2xl border border-line ${className}`}
+      className={`bantai-map-surface relative ${heightClass} ${widthClass} z-0 overflow-hidden rounded-2xl border border-line ${className}`}
       ref={mapRef}
     >
       {showControls && (

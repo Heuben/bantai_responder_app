@@ -1,7 +1,7 @@
 import React, { useCallback, useMemo, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { AnimatePresence, motion } from 'framer-motion';
-import { LockIcon, MinusIcon, NavigationIcon, PlusIcon, XIcon } from 'lucide-react';
+import { LockIcon, MinusIcon, NavigationIcon, PlusIcon } from 'lucide-react';
 import { useApp } from '../contexts/AppContext';
 import { Button } from '../components/Button';
 import { TopBar } from '../components/TopBar';
@@ -180,43 +180,61 @@ export function LiveMap() {
           {selected ?
           <motion.div
             key={selected.id}
-            initial={{ y: 60, opacity: 0 }}
+            drag="y"
+            dragConstraints={{ top: 0, bottom: 0 }}
+            dragElastic={0.12}
+            onDragEnd={(_, info) => {
+              if (info.offset.y > 110) {
+                setSelectedId(null);
+              }
+            }}
+            initial={{ y: 80, opacity: 0 }}
             animate={{ y: 0, opacity: 1 }}
-            exit={{ y: 24, opacity: 0 }}
+            exit={{ y: 30, opacity: 0 }}
             transition={{ duration: 0.32, ease: [0.23, 1, 0.32, 1] }}
-            className="absolute inset-x-0 bottom-0 z-40 rounded-t-2xl border-t border-line bg-surface/88 p-4 shadow-lift backdrop-blur-md">
+            className="absolute inset-x-0 bottom-0 z-40 rounded-t-[28px] border-t border-line bg-[linear-gradient(180deg,rgba(255,255,255,0.96),rgba(243,246,251,0.96))] p-4 pb-5 shadow-[0_-18px_40px_rgba(15,23,42,0.18)] backdrop-blur-xl">
+
+            <div className="mx-auto mb-3 h-1.5 w-12 rounded-full bg-slate-300/80" aria-hidden="true" />
 
             <div className="flex items-start justify-between gap-3">
-              <IncidentBadge type={selected.type} />
-              <button
-                type="button"
-                onClick={() => setSelectedId(null)}
-                aria-label="Close alert preview"
-                className="-m-1.5 rounded-lg p-1.5 text-muted transition-colors duration-150 ease-out hover:text-ink">
-
-                <XIcon className="h-5 w-5" />
-              </button>
+              <div className="flex items-center gap-2">
+                <IncidentBadge type={selected.type} />
+                <span className="rounded-full border border-line bg-white/70 px-2 py-1 text-[10px] font-bold uppercase tracking-[0.12em] text-muted">
+                  Nearby
+                </span>
+              </div>
+              <span className="rounded-full bg-slate-100 px-2.5 py-1 text-[10px] font-semibold uppercase tracking-[0.12em] text-muted">
+                Swipe down to close
+              </span>
             </div>
 
-            <div className="mt-3 flex items-baseline gap-3">
-              <p className="tabular text-3xl font-extrabold tracking-[-0.03em] text-ink">
-                {formatDistance(selected.distanceMeters)}
-              </p>
-              <p className="text-[15px] text-muted">away · {selected.area}</p>
+            <div className="mt-4 flex items-end justify-between gap-3 rounded-2xl border border-line bg-white/70 p-3 shadow-[inset_0_1px_0_rgba(255,255,255,0.7)]">
+              <div>
+                <p className="text-[11px] font-bold uppercase tracking-[0.12em] text-muted">Incident</p>
+                <div className="mt-1 flex items-baseline gap-2">
+                  <p className="tabular text-3xl font-extrabold tracking-[-0.04em] text-ink">
+                    {formatDistance(selected.distanceMeters)}
+                  </p>
+                  <p className="text-[15px] text-muted">away</p>
+                </div>
+              </div>
+              <span className="rounded-full bg-emerald-50 px-2.5 py-1 text-[11px] font-bold uppercase tracking-[0.08em] text-emerald-700">
+                {selected.area}
+              </span>
             </div>
 
-            <dl className="mt-3 grid grid-cols-2 gap-3 border-t border-line pt-3 text-sm">
-              <div>
-                <dt className="text-muted">AI confidence</dt>
-                <dd className="tabular text-base font-bold text-ink">{selected.confidence}%</dd>
+            <dl className="mt-4 grid grid-cols-2 gap-3 text-sm">
+              <div className="rounded-2xl bg-white/70 p-3 shadow-[inset_0_1px_0_rgba(255,255,255,0.7)]">
+                <dt className="text-[10px] font-bold uppercase tracking-[0.12em] text-muted">AI confidence</dt>
+                <dd className="mt-1 tabular text-base font-bold text-ink">{selected.confidence}%</dd>
               </div>
-              <div>
-                <dt className="text-muted">Detected</dt>
-                <dd className="tabular text-base font-bold text-ink">{selected.detectedAt}</dd>
+              <div className="rounded-2xl bg-white/70 p-3 shadow-[inset_0_1px_0_rgba(255,255,255,0.7)]">
+                <dt className="text-[10px] font-bold uppercase tracking-[0.12em] text-muted">Detected</dt>
+                <dd className="mt-1 tabular text-base font-bold text-ink">{selected.detectedAt}</dd>
               </div>
-              <div className="col-span-2">
-                <dt className="text-muted">Coordinates</dt>
-                <dd className="font-mono text-sm font-semibold text-ink">
+              <div className="col-span-2 rounded-2xl bg-white/70 p-3 shadow-[inset_0_1px_0_rgba(255,255,255,0.7)]">
+                <dt className="text-[10px] font-bold uppercase tracking-[0.12em] text-muted">Coordinates</dt>
+                <dd className="mt-1 font-mono text-sm font-semibold text-ink">
                   {formatCoordinates(selected.coordinates)}
                 </dd>
               </div>
@@ -228,11 +246,11 @@ export function LiveMap() {
                 Open Active Incident
               </Button> :
               isEngaged ?
-              <p className="rounded-xl bg-raised px-4 py-3 text-center text-sm font-medium text-muted">
+              <p className="rounded-2xl bg-slate-100 px-4 py-3 text-center text-sm font-medium text-muted shadow-[inset_0_1px_0_rgba(255,255,255,0.8)]">
                 One active incident at a time — finish or stand down first.
               </p> :
               !onDuty ?
-              <p className="rounded-xl bg-raised px-4 py-3 text-center text-sm font-medium text-muted">
+              <p className="rounded-2xl bg-slate-100 px-4 py-3 text-center text-sm font-medium text-muted shadow-[inset_0_1px_0_rgba(255,255,255,0.8)]">
                 Go on duty to respond to this alert.
               </p> :
 
