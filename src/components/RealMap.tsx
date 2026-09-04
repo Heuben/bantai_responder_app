@@ -66,7 +66,7 @@ function responderIconHtml(): string {
   `;
 }
 
-// Build a circular incident marker using semi-transparent incident colors.
+// Build a larger circular incident marker with solid incident colors.
 function pillBadgeHtml(opts: {
   iconSvg: string;
   distanceLabel: string;
@@ -77,17 +77,17 @@ function pillBadgeHtml(opts: {
   const { iconSvg, distanceLabel, variant, dimmed, incidentType } = opts;
 
   const baseColors: Record<IncidentType, { bg: string; glow: string; icon: string }> = {
-    FIREARM_THREAT: { bg: 'rgba(239, 68, 68, 0.25)', glow: 'rgba(239, 68, 68, 0.28)', icon: '#fff1f2' },
-    BLADE_THREAT: { bg: 'rgba(239, 68, 68, 0.22)', glow: 'rgba(239, 68, 68, 0.24)', icon: '#fff1f2' },
-    THREAT_TO_PERSON: { bg: 'rgba(239, 68, 68, 0.2)', glow: 'rgba(239, 68, 68, 0.2)', icon: '#fff1f2' },
-    ACCIDENT: { bg: 'rgba(239, 68, 68, 0.25)', glow: 'rgba(239, 68, 68, 0.28)', icon: '#fff1f2' },
-    CONNECTION_LOSS: { bg: 'rgba(148, 163, 184, 0.22)', glow: 'rgba(148, 163, 184, 0.22)', icon: '#f8fafc' }
+    FIREARM_THREAT: { bg: '#ef4444', glow: 'rgba(239, 68, 68, 0.35)', icon: '#ffffff' },
+    BLADE_THREAT: { bg: '#ef4444', glow: 'rgba(239, 68, 68, 0.35)', icon: '#ffffff' },
+    THREAT_TO_PERSON: { bg: '#ef4444', glow: 'rgba(239, 68, 68, 0.35)', icon: '#ffffff' },
+    ACCIDENT: { bg: '#ef4444', glow: 'rgba(239, 68, 68, 0.35)', icon: '#ffffff' },
+    CONNECTION_LOSS: { bg: '#94a3b8', glow: 'rgba(148, 163, 184, 0.28)', icon: '#f8fafc' }
   };
 
   const tone = baseColors[incidentType] ?? baseColors.THREAT_TO_PERSON;
-  const bg = dimmed ? 'rgba(100, 116, 139, 0.18)' : variant === 'engaged' ? 'rgba(249, 115, 22, 0.28)' : tone.bg;
-  const glow = dimmed ? 'rgba(100, 116, 139, 0.18)' : variant === 'engaged' ? 'rgba(249, 115, 22, 0.24)' : tone.glow;
-  const opacity = dimmed ? '0.8' : '1';
+  const bg = dimmed ? '#64748b' : variant === 'engaged' ? '#f97316' : tone.bg;
+  const glow = dimmed ? 'rgba(100, 116, 139, 0.22)' : variant === 'engaged' ? 'rgba(249, 115, 22, 0.28)' : tone.glow;
+  const opacity = dimmed ? '0.85' : '1';
 
   return `
     <div
@@ -160,14 +160,13 @@ const MAP_UI_CSS = `
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    width: 44px;
-    height: 44px;
+    width: 48px;
+    height: 48px;
     border-radius: 50%;
     color: var(--pill-icon, #ffffff);
-    background: linear-gradient(180deg, rgba(255,255,255,0.25), var(--pill-bg));
-    box-shadow: 0 12px 18px var(--pill-glow), 0 0 0 3px rgba(255,255,255,0.7);
-    border: 1px solid rgba(255,255,255,0.7);
-    backdrop-filter: blur(6px);
+    background: var(--pill-bg);
+    box-shadow: 0 12px 18px var(--pill-glow), 0 0 0 3px rgba(255,255,255,0.8);
+    border: 1px solid rgba(255,255,255,0.8);
     transform: translateY(-6px);
     cursor: pointer;
     user-select: none;
@@ -176,14 +175,14 @@ const MAP_UI_CSS = `
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    width: 24px;
-    height: 24px;
+    width: 26px;
+    height: 26px;
     color: var(--pill-icon, #ffffff);
     flex-shrink: 0;
   }
   .bantai-pill-icon svg {
-    width: 20px;
-    height: 20px;
+    width: 22px;
+    height: 22px;
     display: block;
   }
 `;
@@ -420,8 +419,8 @@ export const RealMap = memo(forwardRef<RealMapHandle, RealMapProps>(function Rea
         const icon = L.divIcon({
           html: pillBadgeHtml({ iconSvg, distanceLabel, variant, dimmed, incidentType: marker.type }),
           className: 'bantai-pill-icon-wrapper',
-          iconSize: [44, 44],
-          iconAnchor: [22, 28]
+          iconSize: [48, 48],
+          iconAnchor: [24, 30]
         });
 
         const markerInstance = L.marker([marker.lat, marker.lng], { icon })
